@@ -1,5 +1,6 @@
 import React from 'react';
 import Convert from '../src/convert.js';
+import ReactDOMServer from 'react-dom/server';
 
 var elements_1 = (<div>FOO</div>);
 var html_1 = `<div>FOO</div>`
@@ -53,6 +54,27 @@ var html_8 =
 var elements_9 = (<div></div>);
 var html_9 = `<div></div>`
 
+class SomeComponent extends React.Component {
+
+  render() {
+    return (<div>Some Text<img src={this.props.src}/></div>);
+  }
+
+}
+
+var elements_10 = (<div><input /><SomeComponent src="foo.jpg" />Another Text</div>);
+var html_10 =
+`<div>
+  <input>
+  <div>
+    Some Text
+    <img src="foo.jpg">
+  </div>
+  Another Text
+</div>`
+
+//console.log(ReactDOMServer.renderToStaticMarkup(elements_10))
+
 describe("react elements to html", () => {
   it("converts a simple structure", () => {
     expect(Convert(elements_1)).toEqual(html_1);
@@ -74,4 +96,9 @@ describe("react elements to html", () => {
   it("converts the style object to css styles", () => {
     expect(Convert(elements_8)).toEqual(html_8);
   });
+
+  it("converts nested react components correctly", () => {
+    expect(Convert(elements_10)).toEqual(html_10);
+  });
+
 });
