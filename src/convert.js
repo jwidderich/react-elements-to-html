@@ -33,7 +33,7 @@ function isSelfClosingTag(tag) {
 //   1) undefined (the element has no children)
 //   2) a string (the element has only a text child)
 //   3) an array of elements and strings
-function elementsToHtmlString(elements, renderer, indent='', indentWith='  ') {
+function elementsToHtmlString(elements, renderer, indent=0) {
 
   if(!elements) {
     return '';
@@ -53,7 +53,7 @@ function elementsToHtmlString(elements, renderer, indent='', indentWith='  ') {
     // and pass the result into this function.
     if(typeof element === 'object' && typeof element.type === 'function') {
       let f = new element.type(element.props);
-      let content = elementsToHtmlString(f.render(), renderer, indent, indentWith);
+      let content = elementsToHtmlString(f.render(), renderer, indent);
       return content;
     }
 
@@ -76,8 +76,7 @@ function elementsToHtmlString(elements, renderer, indent='', indentWith='  ') {
     //   <img src="foo.jpg">
     //   Some Text
     // </div>
-    let nextIndent = indent + indentWith;
-    let content = elementsToHtmlString(element.props.children, renderer, nextIndent, indentWith);
+    let content = elementsToHtmlString(element.props.children, renderer, indent + 1);
     return renderer.render(element.type, convertProps(element.props), content, indent);
   }).join("");
 }
@@ -115,8 +114,8 @@ function buildStyleString(styleObject) {
 }
 
 function convert(elements, indentWith='  ') {
-  var renderer = new StringRenderer();
-  return elementsToHtmlString(elements, renderer, '', indentWith).trim();
+  var renderer = new StringRenderer('  ');
+  return elementsToHtmlString(elements, renderer).trim();
 }
 
 export default convert;

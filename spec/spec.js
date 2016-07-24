@@ -73,8 +73,6 @@ var html_10 =
   Another Text
 </div>`
 
-//console.log(ReactDOMServer.renderToStaticMarkup(elements_10))
-
 describe("react elements to html", () => {
   it("converts a simple structure", () => {
     expect(Convert(elements_1)).toEqual(html_1);

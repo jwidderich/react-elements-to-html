@@ -1,6 +1,17 @@
 export default class StringRenderer {
 
-  constructor() {
+  constructor(indentWith) {
+    this.indentWith = indentWith;
+    this.indentCache = {};
+    this.indentCache[0] = '';
+  }
+
+  indent(indentDepth) {
+    if(this.indentCache[indentDepth] !== undefined) {
+      return this.indentCache[indentDepth];
+    }
+    this.indentCache[indentDepth] = this.indent(indentDepth - 1) + this.indentWith;
+    return this.indentCache[indentDepth];
   }
 
   buildAttributes(attributes) {
@@ -15,26 +26,26 @@ export default class StringRenderer {
     return '</' + tag + '>';
   }
 
-  renderString(string, indent) {
-    return indent + string + '\n';
+  renderString(string, indentDepth) {
+    return this.indent(indentDepth) + string + '\n';
   }
 
-  renderInline(tag, attributes, content, indent) {
-    return indent +
+  renderInline(tag, attributes, content, indentDepth) {
+    return this.indent(indentDepth) +
       this.buildOpeningTag(tag, attributes) +
       content +
       this.buildClosingTag(tag) + '\n';
   }
 
-  renderEmpty(tag, attributes, isSelfClosingTag, indent) {
-    return indent + this.buildOpeningTag(tag, attributes) +
+  renderEmpty(tag, attributes, isSelfClosingTag, indentDepth) {
+    return this.indent(indentDepth) + this.buildOpeningTag(tag, attributes) +
       (isSelfClosingTag ? '' : this.buildClosingTag(tag)) + '\n';
   }
 
-  render(tag, attributes, content, indent) {
-    return indent + this.buildOpeningTag(tag, attributes) + '\n' +
+  render(tag, attributes, content, indentDepth) {
+    return this.indent(indentDepth) + this.buildOpeningTag(tag, attributes) + '\n' +
       content +
-      indent + this.buildClosingTag(tag) + '\n';
+      this.indent(indentDepth) + this.buildClosingTag(tag) + '\n';
   }
 
 }
